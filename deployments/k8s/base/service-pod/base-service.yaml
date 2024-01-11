@@ -11,11 +11,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: sales # Selector for POD name search
+      app: service # Selector for POD name search
   template:
     metadata:
       labels:
-        app: sales
+        app: service
     spec:
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true

@@ -6,7 +6,7 @@ ENV CGO_ENABLED 0
 ARG BUILD_REF
 
 # Copy the source code into the container
-COPY ./main.go /service
+COPY ./main.go ./go.mod /service/
 
 # Build the service binary
 WORKDIR /service
@@ -16,13 +16,13 @@ RUN go build -ldflags "-X main.build=${BUILD_REF}"
 FROM alpine:3.14
 ARG BUILD_DATE
 ARG BUILD_REF
-COPY --from=build_sales-api /service /service/service
+COPY --from=build_sales-api /service /service/
 WORKDIR /service
-CMD ["./service"]
+CMD ["./ultimateService"]
 
-LABEL org.opencontainers.image.created="${BUILD_DATE}"
-      org.opencontainers.image.title="service"
-      org.opencontainers.image.authors="ktruedat"
-      org.opencontainers.image.source="https://github.com/ktruedat/ultimateService"
-      org.opencontainers.image.revision="${BUILD_REF}"
-      org.opencontainers.image.vendor="service"
+#LABEL org.opencontainers.image.created="${BUILD_DATE}"
+#      org.opencontainers.image.title="service"
+#      org.opencontainers.image.authors="ktruedat"
+#      org.opencontainers.image.source="https://github.com/ktruedat/ultimateService"
+#      org.opencontainers.image.revision="${BUILD_REF}"
+#      org.opencontainers.image.vendor="service"
