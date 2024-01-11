@@ -29,7 +29,7 @@ kind-up:
 		--image kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72 \
 		--name $(KIND_CLUSTER) \
 		--config deployments/k8s/kind/kind-config.yaml
-	#kubectl config set-context --current --namespace=sales-system
+	kubectl config set-context --current --namespace=service-system
 
 kind-down:
 	kind delete cluster --name $(KIND_CLUSTER)
@@ -45,8 +45,20 @@ kind-status:
 	kubectl get svc -o wide
 	kubectl get pods -o wide --watch --all-namespaces
 
+kind-status-service:
+	kubectl get pods -o wide --watch --namespace=service-system
+
 kind-logs:
 	kubectl logs -l app=service --all-containers=true -f --tail=100 --namespace=service-system
 
 kind-restart:
 	kubectl rollout restart deployment service-pod --namespace=service-system
+
+
+kind-update: all kind-load kind-restart
+
+
+kind-describe:
+	kubectl describe nodes
+	kubectl describe svc
+	kubectl describe pod -l app=service
