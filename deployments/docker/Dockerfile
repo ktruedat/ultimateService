@@ -6,7 +6,7 @@ ENV CGO_ENABLED 0
 ARG BUILD_REF
 
 # Copy the source code into the container
-COPY ./main.go ./go.mod /service/
+COPY ./main.go ./go.mod ./go.sum /service/
 
 # Build the service binary
 WORKDIR /service

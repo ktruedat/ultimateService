@@ -16,7 +16,7 @@ func main() {
 	// Set the correct number of threads for the service based on what is
 	// available either by the machine or quotas
 	if _, err := maxprocs.Set(); err != nil {
-		fmt.Printf("maxprocs: %w", err)
+		fmt.Printf("maxprocs: %v", err)
 		os.Exit(1)
 	}
 
