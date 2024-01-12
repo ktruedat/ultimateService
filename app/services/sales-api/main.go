@@ -11,29 +11,16 @@ var build = "develop"
 
 func main() {
 	//Construct the application logger.
-	config := zap.NewProductionConfig()
-	config.OutputPaths = []string{"stdout"}
-	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	config.DisableStacktrace = true
-	config.InitialFields = map[string]interface{}{
-		"service": "SALES-API",
-	}
-	log, err := config.Build()
+	log, err := initLogger("SALES-API")
 	if err != nil {
-		fmt.Println("Error constructin logger:", err)
+		fmt.Println("Error constructing the app logger:", err)
 		os.Exit(1)
-	}
 
-	defer func(log *zap.Logger) {
-		err := log.Sync()
-		if err != nil {
-			fmt.Println("Error syncing logger:", err)
-			os.Exit(1)
-		}
-	}(log)
+	}
+	defer log.Sync()
 
 	// Perform the startup and shutdown sequence
-	if err := run(log.Sugar()); err != nil {
+	if err := run(log); err != nil {
 		fmt.Println("Error running the app:", err)
 		os.Exit(1)
 	}
@@ -42,4 +29,20 @@ func main() {
 func run(log *zap.SugaredLogger) error {
 
 	return nil
+}
+
+func initLogger(service string) (*zap.SugaredLogger, error) {
+	config := zap.NewProductionConfig()
+	config.OutputPaths = []string{"stdout"}
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.DisableStacktrace = true
+	config.InitialFields = map[string]interface{}{
+		"service": service,
+	}
+	log, err := config.Build()
+	if err != nil {
+		fmt.Println("Error constructin logger:", err)
+		os.Exit(1)
+	}
+	return log.Sugar(), nil
 }
