@@ -21,7 +21,7 @@ func main() {
 	}
 
 	g := runtime.GOMAXPROCS(0)
-	log.Printf("starting service build[%s] CPU[%d}", build, g)
+	log.Printf("starting service build[%s] CPU[%d]", build, g)
 	defer log.Println("service ended")
 
 	//Controlled shutdown, SIGINT is for CTRL+C
