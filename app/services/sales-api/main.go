@@ -2,33 +2,44 @@ package main
 
 import (
 	"fmt"
-	"go.uber.org/automaxprocs/maxprocs"
-	"log"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"os"
-	"os/signal"
-	"runtime"
-	"syscall"
 )
 
 var build = "develop"
 
 func main() {
-	// Set the correct number of threads for the service based on what is
-	// available either by the machine or quotas
-	if _, err := maxprocs.Set(); err != nil {
-		fmt.Printf("maxprocs: %v", err)
+	//Construct the application logger.
+	config := zap.NewProductionConfig()
+	config.OutputPaths = []string{"stdout"}
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.DisableStacktrace = true
+	config.InitialFields = map[string]interface{}{
+		"service": "SALES-API",
+	}
+	log, err := config.Build()
+	if err != nil {
+		fmt.Println("Error constructin logger:", err)
 		os.Exit(1)
 	}
 
-	g := runtime.GOMAXPROCS(0)
-	log.Printf("starting service build[%s] CPU[%d]", build, g)
-	defer log.Println("service ended")
+	defer func(log *zap.Logger) {
+		err := log.Sync()
+		if err != nil {
+			fmt.Println("Error syncing logger:", err)
+			os.Exit(1)
+		}
+	}(log)
 
-	//Controlled shutdown, SIGINT is for CTRL+C
-	// SIGTERM is what Kubernetes is using to terminate the app
-	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
-	<-shutdown
+	// Perform the startup and shutdown sequence
+	if err := run(log.Sugar()); err != nil {
+		fmt.Println("Error running the app:", err)
+		os.Exit(1)
+	}
+}
 
-	log.Println("stopping service")
+func run(log *zap.SugaredLogger) error {
+
+	return nil
 }
