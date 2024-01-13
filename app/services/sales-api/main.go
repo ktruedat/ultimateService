@@ -26,6 +26,7 @@ func main() {
 	}
 }
 
+// Entry level run function
 func run(log *zap.SugaredLogger) error {
 
 	return nil
