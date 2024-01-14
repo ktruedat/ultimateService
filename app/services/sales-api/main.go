@@ -26,7 +26,7 @@ func main() {
 	}
 }
 
-// Entry level run function
+// Entry level run function for entering the program
 func run(log *zap.SugaredLogger) error {
 
 	return nil
