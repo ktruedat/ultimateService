@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 run:
-	go run main.go
+	go run app/services/sales-api/main.go --help
 
 build :
 	go build -ldflags "-X main.build=local"
