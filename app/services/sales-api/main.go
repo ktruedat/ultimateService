@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/ardanlabs/conf"
 	"go.uber.org/automaxprocs/maxprocs"
@@ -10,6 +11,10 @@ import (
 	"runtime"
 	"time"
 )
+
+/*
+TODO: Need to figure out timeouts for http service
+*/
 
 var build = "develop"
 
@@ -58,9 +63,19 @@ func run(log *zap.SugaredLogger) error {
 		}
 	}{
 		Version: conf.Version{
-			SVN:  build,
+			SVN:  build, // System version number
 			Desc: "copyright information here",
 		},
+	}
+
+	const prefix = "SALES"
+	help, err := conf.ParseOSArgs(prefix, &cfg)
+	if err != nil {
+		if errors.Is(err, conf.ErrHelpWanted) {
+			fmt.Println(help)
+			return nil
+		}
+		return fmt.Errorf("parsing config: %w", err)
 	}
 
 	return nil
