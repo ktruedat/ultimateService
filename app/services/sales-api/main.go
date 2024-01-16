@@ -8,7 +8,9 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 	"time"
 )
 
@@ -59,7 +61,7 @@ func run(log *zap.SugaredLogger) error {
 			ReadTimeout     time.Duration `conf:"default:5s"`
 			WriteTimeout    time.Duration `conf:"default:10s"`
 			IdleTimeout     time.Duration `conf:"default:120s"`
-			ShutdownTimeout time.Duration `conf:"default:20s"`
+			ShutdownTimeout time.Duration `conf:"default:20s,mask"`
 		}
 	}{
 		Version: conf.Version{
@@ -90,6 +92,10 @@ func run(log *zap.SugaredLogger) error {
 	}
 
 	log.Infow("startup", "config", out)
+
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+	<-shutdown
 
 	return nil
 }
