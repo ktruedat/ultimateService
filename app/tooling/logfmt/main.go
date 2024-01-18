@@ -62,6 +62,9 @@ func main() {
 
 		// Add the rest of the keys ignoring the ones we already
 		// added for the log.
+		// Add the rest of the keys ignoring the ones we already
+		// added for the log.		// Add the rest of the keys ignoring the ones we already
+		//		// added for the log.
 		for k, v := range m {
 			switch k {
 			case "service", "time", "file", "level", "trace_id", "msg":
