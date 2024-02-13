@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"expvar"
 	"fmt"
 	"github.com/ardanlabs/conf"
 	"github.com/ktruedat/ultimateService/app/services/sales-api/handlers"
@@ -110,6 +111,8 @@ func run(log *zap.SugaredLogger) error {
 	}
 
 	log.Infow("startup", "config", out)
+
+	expvar.NewString("build").Set(build)
 
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
