@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ardanlabs/conf"
+	"github.com/ktruedat/ultimateService/app/services/sales-api/handlers"
 	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -87,7 +88,7 @@ func run(log *zap.SugaredLogger) error {
 	// related endpoints. This includes the standard library endpoints
 
 	//Construct the mux
-	debugMux := handlers.DebugMux(build, log, db)
+	debugMux := handlers.DebugStandardLibraryMux()
 
 	// Start the service listening for debug requests.
 	// Not concerned with shutting this down with load shedding.
