@@ -45,7 +45,6 @@ func run(log *zap.SugaredLogger) error {
 
 	// ================================================================
 	// GOMAXPROCS
-
 	// Set the correct number of threads for the service
 	// based on what is available either by the machine or quotas
 	if _, err := maxprocs.Set(); err != nil {
@@ -123,6 +122,35 @@ func run(log *zap.SugaredLogger) error {
 	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+
+	api := http.Server{
+		Addr:         cfg.Web.APIHost,
+		Handler:      nil,
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+		IdleTimeout:  cfg.Web.IdleTimeout,
+		ErrorLog:     zap.NewStdLog(log.Desugar()),
+	}
+
+	//// Make a channel to listen for errors coming from the listener. Use a
+	//// buffered channel so the goroutine can exit if we don't collect this error.
+	//serverErrors := make(chan error, 1)
+	//
+	//// Start the service listening for api requests.
+	//go func() {
+	//	log.Infow("startup", "status", "api router started", "host", api.Addr)
+	//	serverErrors <- api.ListenAndServe()
+	//}()
+	//
+	//// =======================================================================
+	//// Shutdown
+	//
+	//// Blocking main and waiting for shutdown.
+	//// Using blocking select
+	//select {
+	//case err := <-serverErrors:
+	//	return fmt.Errorf("server error: %w", err)
+	//}
 
 	return nil
 }
