@@ -132,25 +132,25 @@ func run(log *zap.SugaredLogger) error {
 		ErrorLog:     zap.NewStdLog(log.Desugar()),
 	}
 
-	//// Make a channel to listen for errors coming from the listener. Use a
-	//// buffered channel so the goroutine can exit if we don't collect this error.
-	//serverErrors := make(chan error, 1)
-	//
-	//// Start the service listening for api requests.
-	//go func() {
-	//	log.Infow("startup", "status", "api router started", "host", api.Addr)
-	//	serverErrors <- api.ListenAndServe()
-	//}()
-	//
-	//// =======================================================================
-	//// Shutdown
-	//
-	//// Blocking main and waiting for shutdown.
-	//// Using blocking select
-	//select {
-	//case err := <-serverErrors:
-	//	return fmt.Errorf("server error: %w", err)
-	//}
+	// Make a channel to listen for errors coming from the listener. Use a
+	// buffered channel so the goroutine can exit if we don't collect this error.
+	serverErrors := make(chan error, 1)
+
+	// Start the service listening for api requests.
+	go func() {
+		log.Infow("startup", "status", "api router started", "host", api.Addr)
+		serverErrors <- api.ListenAndServe()
+	}()
+
+	// =======================================================================
+	// Shutdown
+
+	// Blocking main and waiting for shutdown.
+	// Using blocking select
+	select {
+	case err := <-serverErrors:
+		return fmt.Errorf("server error: %w", err)
+	}
 
 	return nil
 }
