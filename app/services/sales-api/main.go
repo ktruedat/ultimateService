@@ -150,6 +150,8 @@ func run(log *zap.SugaredLogger) error {
 	// Using blocking select
 	select {
 	case err := <-serverErrors:
+		// if an error occurred here, it must be some low level networking problem
+		// that happened, so there is no point in trying to shed load here.
 		return fmt.Errorf("server error: %w", err)
 	case sig := <-shutdown:
 		log.Infow("shutdown", "status", "shutdown started", "signal", sig)

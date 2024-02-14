@@ -43,12 +43,13 @@ kind-up:
 kind-down:
 	kind delete cluster --name $(KIND_CLUSTER)
 
+kind-apply:
+	kustomize build deployments/k8s/kind/sales-pod | kubectl apply -f -
+
 kind-load:
 	cd deployments/k8s/kind/sales-pod; kustomize edit set image sales-api-image=sales-api-amd64:$(VERSION)
 	kind load docker-image sales-api-amd64:$(VERSION) --name $(KIND_CLUSTER)
 
-kind-apply:
-	kustomize build deployments/k8s/kind/sales-pod | kubectl apply -f -
 
 kind-status:
 	kubectl get nodes -o wide
