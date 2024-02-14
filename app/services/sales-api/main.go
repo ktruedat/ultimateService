@@ -99,6 +99,8 @@ func run(log *zap.SugaredLogger) error {
 		}
 	}()
 
+	expvar.NewString("build").Set(build)
+
 	// ==========================================================
 	// App starting
 
@@ -112,11 +114,15 @@ func run(log *zap.SugaredLogger) error {
 
 	log.Infow("startup", "config", out)
 
-	expvar.NewString("build").Set(build)
+	// ===========================================================
+	// Start API Service
 
+	log.Infow("startup", "status", "initializing API support")
+
+	// Make a channel to listen for an interrupt or terminate signal from the OS.
+	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
-	<-shutdown
 
 	return nil
 }
