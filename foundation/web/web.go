@@ -11,7 +11,7 @@ import (
 
 // A Handler is a type that handles a http request within our own
 // framework
-type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Response) error
+type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
 
 // App is the entrypoint into our application and what configures our context
 // object for each of our http handlers. Feel free to add any configuration

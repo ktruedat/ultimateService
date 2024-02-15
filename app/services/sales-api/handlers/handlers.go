@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"expvar"
+	testgrp "github.com/ktruedat/ultimateService/app/services/sales-api/handlers/v1"
 	"github.com/ktruedat/ultimateService/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
@@ -37,6 +38,10 @@ type APIMuxConfig struct {
 func APIMux(cfg APIMuxConfig) *web.App {
 	app := web.NewApp(cfg.Shutdown)
 
-	app.Handle(http.MethodGet, "/v1", "/test", h)
+	tgh := testgrp.Handlers{
+		Log: cfg.Log,
+	}
+
+	app.Handle(http.MethodGet, "/v1", "/test", tgh.Test)
 	return app
 }
