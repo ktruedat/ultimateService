@@ -3,7 +3,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"expvar"
 	"github.com/ktruedat/ultimateService/foundation/web"
 	"go.uber.org/zap"
@@ -38,14 +37,9 @@ type APIMuxConfig struct {
 func APIMux(cfg APIMuxConfig) *web.App {
 	app := web.NewApp(cfg.Shutdown)
 	h := func(w http.ResponseWriter, r *http.Request) {
-		status := struct {
-			Status string
-		}{
-			Status: "OK",
-		}
-		json.NewEncoder(w).Encode(status)
+
 	}
 
-	app.Handle(http.MethodGet, "/test", h)
+	app.Handle(http.MethodGet, "/v1", "/test", h)
 	return app
 }

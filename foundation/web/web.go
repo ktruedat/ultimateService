@@ -34,3 +34,9 @@ func NewApp(shutdown chan os.Signal) *App {
 func (a *App) SignalShutdown() {
 	a.shutdown <- syscall.SIGTERM
 }
+
+// Handle sets a handler function for a given HTTP method and path pair
+// to the application server mux
+func (a *App) Handle(method string, group string, path string, handler Handler) {
+
+}
