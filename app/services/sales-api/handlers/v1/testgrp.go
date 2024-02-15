@@ -1,4 +1,4 @@
-package tgh
+package testgrp
 
 import (
 	"context"

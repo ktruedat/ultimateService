@@ -36,9 +36,6 @@ type APIMuxConfig struct {
 
 func APIMux(cfg APIMuxConfig) *web.App {
 	app := web.NewApp(cfg.Shutdown)
-	h := func(w http.ResponseWriter, r *http.Request) {
-
-	}
 
 	app.Handle(http.MethodGet, "/v1", "/test", h)
 	return app
