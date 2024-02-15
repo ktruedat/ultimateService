@@ -36,8 +36,10 @@ type APIMuxConfig struct {
 }
 
 func APIMux(cfg APIMuxConfig) *web.App {
+	// Construct the web.App which holds all routes.
 	app := web.NewApp(cfg.Shutdown)
 
+	// Load the routes for the different versions of the API.
 	v1(app, cfg)
 
 	return app
