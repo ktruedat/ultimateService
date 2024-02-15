@@ -5,7 +5,7 @@ package handlers
 import (
 	"encoding/json"
 	"expvar"
-	"github.com/dimfeld/httptreemux/v5"
+	"github.com/ktruedat/ultimateService/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
 	"net/http/pprof"
@@ -35,8 +35,8 @@ type APIMuxConfig struct {
 	Log      *zap.SugaredLogger
 }
 
-func APIMux(cfg APIMuxConfig) *httptreemux.ContextMux {
-	mux := httptreemux.NewContextMux()
+func APIMux(cfg APIMuxConfig) *web.App {
+	app := web.NewApp(cfg.Shutdown)
 	h := func(w http.ResponseWriter, r *http.Request) {
 		status := struct {
 			Status string
@@ -46,6 +46,6 @@ func APIMux(cfg APIMuxConfig) *httptreemux.ContextMux {
 		json.NewEncoder(w).Encode(status)
 	}
 
-	mux.Handle(http.MethodGet, "/test", h)
-	return mux
+	app.Handle(http.MethodGet, "/test", h)
+	return app
 }
