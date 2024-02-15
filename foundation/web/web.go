@@ -39,4 +39,16 @@ func (a *App) SignalShutdown() {
 // to the application server mux
 func (a *App) Handle(method string, group string, path string, handler Handler) {
 
+	h := func(w http.ResponseWriter, r *http.Request) {
+		if err := handler(r.Context(), w, r); err != nil {
+			return
+		}
+	}
+
+	finalPath := path
+	if group != "" {
+		finalPath = "/" + group + path
+	}
+
+	a.ContextMux.Handle(method, finalPath, h)
 }
