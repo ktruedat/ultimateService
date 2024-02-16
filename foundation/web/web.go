@@ -40,9 +40,21 @@ func (a *App) SignalShutdown() {
 func (a *App) Handle(method string, group string, path string, handler Handler) {
 
 	h := func(w http.ResponseWriter, r *http.Request) {
+
+		// PRE CODE PROCESSING
+		// Logging started ??
+		// We do not want to write business oriented code here
+		// the foundation layer is like our standard library
+		// this code should be free of any business logic or code
+		// instead we should inject code here and let the programmers
+		// decide what code to inject through middleware
+
 		if err := handler(r.Context(), w, r); err != nil {
 			return
 		}
+
+		// Logging ended
+		// POST CODE PROCESSING
 	}
 
 	finalPath := path
