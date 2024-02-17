@@ -5,6 +5,7 @@ import (
 	"github.com/ktruedat/ultimateService/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
+	"time"
 )
 
 // Logger writes some information about the request to the logs in the
@@ -17,13 +18,17 @@ func Logger(log *zap.SugaredLogger) web.Middleware {
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 
-			log.Infow("request started", "method", r.Method, "path", r.URL.Path,
+			traceID := "000000000000000000000000" // Example trace id, to be replaced with actual trace id
+			statusCode := http.StatusOK           // to be replaced with actual status code
+			now := time.Now()                     // to be replaced with actual time of the request
+
+			log.Infow("request started", "traceid", traceID, "method", r.Method, "path", r.URL.Path,
 				"remoteaddr", r.RemoteAddr)
 
 			err := handler(ctx, w, r)
 
-			log.Infow("request completed", "method", r.Method, "path", r.URL.Path,
-				"remoteaddr", r.RemoteAddr)
+			log.Infow("request completed", "traceid", traceID, "method", r.Method, "path", r.URL.Path,
+				"remoteaddr", r.RemoteAddr, "statuscode", statusCode, "since", time.Since(now))
 			return err
 		}
 		return h
