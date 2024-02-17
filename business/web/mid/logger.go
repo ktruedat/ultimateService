@@ -18,17 +18,23 @@ func Logger(log *zap.SugaredLogger) web.Middleware {
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 
-			traceID := "000000000000000000000000" // Example trace id, to be replaced with actual trace id
-			statusCode := http.StatusOK           // to be replaced with actual status code
-			now := time.Now()                     // to be replaced with actual time of the request
+			// If the context is missing this value, request the service
+			// to be shutdown gracefully
+			v, err := web.GetValues(ctx)
+			if err != nil {
+				return err
+			}
 
-			log.Infow("request started", "trace_id", traceID, "method", r.Method, "path", r.URL.Path,
+			log.Infow("request started", "trace_id", v.TraceID, "method", r.Method, "path", r.URL.Path,
 				"remoteaddr", r.RemoteAddr)
 
-			err := handler(ctx, w, r)
+			// Call the next handler.
+			err = handler(ctx, w, r)
 
-			log.Infow("request completed", "trace_id", traceID, "method", r.Method, "path", r.URL.Path,
-				"remoteaddr", r.RemoteAddr, "statuscode", statusCode, "since", time.Since(now))
+			log.Infow("request completed", "trace_id", v.TraceID, "method", r.Method, "path", r.URL.Path,
+				"remoteaddr", r.RemoteAddr, "statuscode", v.StatusCode, "since", time.Since(v.Now))
+
+			// Return the error so it can be handled further up the chain
 			return err
 		}
 		return h
