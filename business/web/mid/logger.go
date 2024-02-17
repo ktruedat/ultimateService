@@ -22,12 +22,12 @@ func Logger(log *zap.SugaredLogger) web.Middleware {
 			statusCode := http.StatusOK           // to be replaced with actual status code
 			now := time.Now()                     // to be replaced with actual time of the request
 
-			log.Infow("request started", "traceid", traceID, "method", r.Method, "path", r.URL.Path,
+			log.Infow("request started", "trace_id", traceID, "method", r.Method, "path", r.URL.Path,
 				"remoteaddr", r.RemoteAddr)
 
 			err := handler(ctx, w, r)
 
-			log.Infow("request completed", "traceid", traceID, "method", r.Method, "path", r.URL.Path,
+			log.Infow("request completed", "trace_id", traceID, "method", r.Method, "path", r.URL.Path,
 				"remoteaddr", r.RemoteAddr, "statuscode", statusCode, "since", time.Since(now))
 			return err
 		}

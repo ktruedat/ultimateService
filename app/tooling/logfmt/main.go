@@ -64,7 +64,7 @@ func main() {
 		// added for the log.
 		for k, v := range m {
 			switch k {
-			case "service", "time", "file", "level", "trace_id", "msg":
+			case "service", "ts", "file", "level", "trace_id", "msg", "caller":
 				continue
 			}
 
