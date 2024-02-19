@@ -44,7 +44,7 @@ func main() {
 // Entry level run function for entering the program
 func run(log *zap.SugaredLogger) error {
 
-	// ================================================================
+	// =================================================================
 	// GOMAXPROCS
 	// Set the correct number of threads for the service
 	// based on what is available either by the machine or quotas
