@@ -39,8 +39,10 @@ type FieldError struct {
 	Error string `json:"error"`
 }
 
+// FieldErrors represents a collection of field errors.
 type FieldErrors []FieldError
 
+// Error implements the error interface.
 func (fe FieldErrors) Error() string {
 	d, err := json.Marshal(fe)
 	if err != nil {
@@ -49,6 +51,8 @@ func (fe FieldErrors) Error() string {
 	return string(d)
 }
 
+// Cause iterates through all the wrapped errors until the root
+// error value is reached.
 func Cause(err error) error {
 	root := err
 	for {
