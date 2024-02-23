@@ -42,7 +42,8 @@ type FieldError struct {
 // FieldErrors represents a collection of field errors.
 type FieldErrors []FieldError
 
-// Error implements the error interface.
+// Error implements the error interface. We use value semantics for the receiver
+// because FieldErrors is already a reference type (slice)
 func (fe FieldErrors) Error() string {
 	d, err := json.Marshal(fe)
 	if err != nil {

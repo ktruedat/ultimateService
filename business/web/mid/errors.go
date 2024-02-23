@@ -2,6 +2,7 @@ package mid
 
 import (
 	"context"
+	"github.com/ktruedat/ultimateService/business/sys/validate"
 	"github.com/ktruedat/ultimateService/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
@@ -30,7 +31,43 @@ func Errors(log *zap.SugaredLogger) web.Middleware {
 
 				// Log the error.
 				log.Errorw("ERROR", "traceid", v.TraceID, "ERROR", err)
+
+				// Build out the error response.
+				var er validate.ErrorResponse
+				var status int
+				switch act := validate.Cause(err).(type) {
+				case validate.FieldErrors:
+					er = validate.ErrorResponse{
+						Error:  "data validation error",
+						Fields: act.Error(),
+					}
+					status = http.StatusBadRequest
+				case *validate.RequestError:
+					er = validate.ErrorResponse{
+						Error: act.Error(),
+					}
+					status = act.Status
+				default:
+					// default scenarios are about untrusted errors
+					er = validate.ErrorResponse{
+						Error: http.StatusText(http.StatusInternalServerError),
+					}
+					status = http.StatusInternalServerError
+				}
+
+				// Respond with the error back to the client.
+				if err := web.Respond(ctx, w, er, status); err != nil {
+					return err
+				}
+
+				// If we receive the shutdown err we need to return it
+				// back to the base handler to shutdown the service.
+				if ok := web.IsShutdown(err); ok {
+					return err
+				}
+
 			}
+			// The error has been handled, so we can stop propagating it
 			return nil
 		}
 		return h
