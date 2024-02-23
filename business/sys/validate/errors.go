@@ -1,6 +1,9 @@
 package validate
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 // ErrInvalidID occurs when an ID is not in a valid form.
 var ErrInvalidID = errors.New("not a proper ID value")
@@ -29,4 +32,19 @@ func NewRequestError(err error, status int) error {
 // wrapped error. This is what will be shown in the services' logs.
 func (err *RequestError) Error() string {
 	return err.Err.Error()
+}
+
+type FieldError struct {
+	Field string `json:"field"`
+	Error string `json:"error"`
+}
+
+type FieldErrors []FieldError
+
+func (fe FieldErrors) Error() string {
+	d, err := json.Marshal(fe)
+	if err != nil {
+		return err.Error()
+	}
+	return string(d)
 }
