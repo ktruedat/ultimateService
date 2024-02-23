@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ktruedat/ultimateService/foundation/web"
 	"net/http"
+	"runtime/debug"
 )
 
 // Panics recovers from panics and converts the panic to an error, so it is
@@ -25,8 +26,11 @@ func Panics() web.Middleware {
 			defer func() {
 				if rec := recover(); rec != nil {
 
+					// we can use the debug.Stack() function to print the stack trace
+					// in the error: "PANIC [%v] TRACE [%v]", rec, string(trace)
+					trace := debug.Stack()
 					// Stack trace will be provided
-					err = fmt.Errorf("PANIC [%v]", rec)
+					err = fmt.Errorf("PANIC [%v] TRACE [%v]", rec, string(trace))
 				}
 			}()
 
