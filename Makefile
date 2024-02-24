@@ -4,6 +4,8 @@ SHELL := /bin/bash
 # Testing running system
 
 # expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+# hey -m GET -c 100 -n 10000 http://localhost:3000/v1/test
+
 
 run:
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
